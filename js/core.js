@@ -3,8 +3,13 @@ var start = function(THREE) {
   var height = window.innerHeight;
 
   var scene = new THREE.Scene();
-  var aspect = width / height;
-  var camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+  var distance = 200
+  var camera = new THREE.OrthographicCamera(
+    width / -distance,
+    width / distance,
+    height / distance,
+    height / -distance,
+    1, 1000);
 
   var renderer = new THREE.WebGLRenderer({
     antialias: true
