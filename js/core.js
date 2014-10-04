@@ -17,8 +17,11 @@ var start = function(THREE) {
   renderer.setSize(width, height);
   document.body.appendChild( renderer.domElement );
 
+  var field = generateField();
 
-  var geometry = new THREE.BoxGeometry(1,1,1);
+  scene.add(field);
+
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
   var material = new THREE.MeshBasicMaterial( { color: 0x00cc00 } );
 
   var cubeA = new THREE.Mesh( geometry, material );
@@ -40,6 +43,20 @@ var start = function(THREE) {
 
   render();
 };
+
+
+var generateField = function () {
+  var geometry = new THREE.PlaneGeometry(100, 100);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xfefefe,
+    side: THREE.DoubleSide
+  });
+
+  var plane = new THREE.Mesh(geometry, material);
+
+  return plane;
+}
 
 
 start(THREE);
