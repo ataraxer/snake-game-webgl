@@ -20,9 +20,18 @@ var start = function(THREE) {
 
   var geometry = new THREE.BoxGeometry(1,1,1);
   var material = new THREE.MeshBasicMaterial( { color: 0x00cc00 } );
-  var cube = new THREE.Mesh( geometry, material );
-  scene.add( cube ); camera.position.z = 5;
 
+  var cubeA = new THREE.Mesh( geometry, material );
+  var cubeB = new THREE.Mesh( geometry, material );
+  var cubeC = new THREE.Mesh( geometry, material );
+
+  cubeB.position.x += 2;
+  cubeC.position.x += 4;
+
+  scene.add( cubeA, cubeB, cubeC );
+
+  camera.position.x = 2;
+  camera.position.z = 5;
 
   function render() {
     requestAnimationFrame(render);
