@@ -28,18 +28,23 @@ var start = function(THREE) {
   var cubeB = new THREE.Mesh( geometry, material );
   var cubeC = new THREE.Mesh( geometry, material );
 
-  cubeB.position.x += 2;
-  cubeC.position.x += 4;
+  cubeB.position.x -= 2;
+  cubeC.position.x += 2;
+
+  cubeA.position.z += 1;
+  cubeB.position.z += 1;
+  cubeC.position.z += 1;
 
   scene.add( cubeA, cubeB, cubeC );
 
-  camera.position.x = 2;
-  camera.position.z = 5;
+  camera.position.z = 10;
 
   function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
+
+  var controls = new THREE.OrbitControls(camera);
 
   render();
 };
