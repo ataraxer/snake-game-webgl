@@ -3,13 +3,13 @@ var start = function(THREE) {
   var height = window.innerHeight;
 
   var scene = new THREE.Scene();
-  var distance = 200
-  var camera = new THREE.OrthographicCamera(
-    width / -distance,
-    width / distance,
-    height / distance,
-    height / -distance,
-    1, 1000);
+
+  var camera = generateCamera({
+    perspective: true,
+    width: width,
+    height: height,
+    distance: 200
+  });
 
   var renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -40,11 +40,54 @@ var start = function(THREE) {
   function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
+    displayCameraPosition(camera);
   }
 
   var controls = new THREE.OrbitControls(camera);
 
   render();
+  console.log(camera);
+};
+
+
+var generateCamera = function (options) {
+  var camera;
+  var distance = options.distance;
+  var width = options.width;
+  var height = options.height;
+
+  if (options.perspective === true) {
+    var aspect = width / height;
+    camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+  } else {
+    camera = new THREE.OrthographicCamera(
+      width / -distance,
+      width / distance,
+      height / distance,
+      height / -distance,
+      1, 1000);
+  }
+
+  return camera;
+};
+
+
+var vectorToString = function (vector) {
+  var coords = [vector.x, vector.y, vector.z];
+  return 'Vector(' + coords.join(', ') + ')';
+};
+
+
+var displayCameraPosition = function (camera) {
+  var up = 'up: ' + vectorToString(camera.up);
+  var position = 'position: ' + vectorToString(camera.position);
+  var rotation = 'rotation: ' + [
+    camera.rotation._x,
+    camera.rotation._y,
+    camera.rotation._z,
+  ].join(', ');
+  var text = [up, position, rotation].join('<br/>');
+  $('#infobox').html(text);
 };
 
 
