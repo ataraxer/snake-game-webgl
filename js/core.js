@@ -21,12 +21,10 @@ var start = function(THREE) {
 
   scene.add(field);
 
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshBasicMaterial( { color: 0x00cc00 } );
 
-  var cubeA = new THREE.Mesh( geometry, material );
-  var cubeB = new THREE.Mesh( geometry, material );
-  var cubeC = new THREE.Mesh( geometry, material );
+  var cubeA = generateCube();
+  var cubeB = generateCube();
+  var cubeC = generateCube();
 
   cubeB.position.x -= 2;
   cubeC.position.x += 2;
@@ -50,7 +48,7 @@ var start = function(THREE) {
 };
 
 
-var generateField = function () {
+var generateField = function() {
   var geometry = new THREE.PlaneGeometry(100, 100);
 
   var material = new THREE.MeshBasicMaterial({
@@ -61,7 +59,17 @@ var generateField = function () {
   var plane = new THREE.Mesh(geometry, material);
 
   return plane;
-}
+};
+
+
+var generateCube = function() {
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var material = new THREE.MeshBasicMaterial( { color: 0x00cc00 } );
+
+  var cube = new THREE.Mesh(geometry, material);
+
+  return cube;
+};
 
 
 start(THREE);
