@@ -35,17 +35,16 @@ var start = function(THREE) {
 
   scene.add(field);
 
+  var cubeA = generateCube(0.8);
+  var cubeB = generateCube(0.8);
+  var cubeC = generateCube(0.8);
 
-  var cubeA = generateCube();
-  var cubeB = generateCube();
-  var cubeC = generateCube();
+  cubeB.position.x -= 0.9;
+  cubeC.position.x += 0.9;
 
-  cubeB.position.x -= 2;
-  cubeC.position.x += 2;
-
-  cubeA.position.z += 1;
-  cubeB.position.z += 1;
-  cubeC.position.z += 1;
+  cubeA.position.z += 0.8;
+  cubeB.position.z += 0.8;
+  cubeC.position.z += 0.8;
 
   scene.add( cubeA, cubeB, cubeC );
 
@@ -117,9 +116,12 @@ var generateField = function(x, y) {
 };
 
 
-var generateCube = function() {
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshBasicMaterial( { color: 0x00cc00 } );
+var generateCube = function (side) {
+  var geometry = new THREE.BoxGeometry(side, side, side);
+  var material = new THREE.MeshPhongMaterial({
+    color: 0x00cc00,
+    shading: THREE.SmoothShading
+  });
 
   var cube = new THREE.Mesh(geometry, material);
 
