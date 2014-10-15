@@ -17,7 +17,7 @@ var start = function(THREE) {
   renderer.setSize(width, height);
   document.body.appendChild( renderer.domElement );
 
-  var field = generateField();
+  var field = generateField(20, 20);
 
   scene.add(field);
 
@@ -91,8 +91,8 @@ var displayCameraPosition = function (camera) {
 };
 
 
-var generateField = function() {
-  var geometry = new THREE.PlaneGeometry(100, 100);
+var generateField = function(x, y) {
+  var geometry = new THREE.PlaneGeometry(x, y);
 
   var material = new THREE.MeshBasicMaterial({
     color: 0xfefefe,
