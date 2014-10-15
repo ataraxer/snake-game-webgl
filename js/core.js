@@ -5,11 +5,25 @@ var start = function(THREE) {
   var scene = new THREE.Scene();
 
   var camera = generateCamera({
-    perspective: true,
+    perspective: false,
     width: width,
     height: height,
-    distance: 200
+    distance: 75
   });
+
+  var shift = 35;
+
+  camera.position.x = shift;
+  camera.position.y = -shift;
+  camera.position.z = 50;
+
+  camera.rotateOnAxis(
+    (new THREE.Vector3(0, 0, 1)).normalize(),
+    45 * Math.PI / 180);
+
+  camera.rotateOnAxis(
+    (new THREE.Vector3(1, 0, 0)).normalize(),
+    45 * Math.PI / 180);
 
   var renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -35,7 +49,6 @@ var start = function(THREE) {
 
   scene.add( cubeA, cubeB, cubeC );
 
-  camera.position.z = 10;
 
   function render() {
     requestAnimationFrame(render);
@@ -43,10 +56,9 @@ var start = function(THREE) {
     displayCameraPosition(camera);
   }
 
-  var controls = new THREE.OrbitControls(camera);
+  //var controls = new THREE.OrbitControls(camera);
 
   render();
-  console.log(camera);
 };
 
 
@@ -58,7 +70,7 @@ var generateCamera = function (options) {
 
   if (options.perspective === true) {
     var aspect = width / height;
-    camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(distance, aspect, 0.1, 1000);
   } else {
     camera = new THREE.OrthographicCamera(
       width / -distance,
