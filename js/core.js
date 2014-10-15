@@ -48,6 +48,8 @@ var start = function(THREE) {
 
   scene.add( cubeA, cubeB, cubeC );
 
+  var lightSource = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+  scene.add(lightSource);
 
   function render() {
     requestAnimationFrame(render);
