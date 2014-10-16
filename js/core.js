@@ -1,4 +1,23 @@
 var start = function(THREE) {
+  var scene = generateScene(THREE);
+
+  var cubeA = generateCube(0.8);
+  var cubeB = generateCube(0.8);
+  var cubeC = generateCube(0.8);
+
+  cubeB.position.x -= 0.9;
+  cubeC.position.x += 0.9;
+
+  cubeA.position.z += 0.8;
+  cubeB.position.z += 0.8;
+  cubeC.position.z += 0.8;
+
+  scene.add( cubeA, cubeB, cubeC );
+
+};
+
+
+var generateScene = function (THREE) {
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -28,6 +47,7 @@ var start = function(THREE) {
   var renderer = new THREE.WebGLRenderer({
     antialias: true
   });
+
   renderer.setSize(width, height);
   document.body.appendChild( renderer.domElement );
 
@@ -35,31 +55,20 @@ var start = function(THREE) {
 
   scene.add(field);
 
-  var cubeA = generateCube(0.8);
-  var cubeB = generateCube(0.8);
-  var cubeC = generateCube(0.8);
-
-  cubeB.position.x -= 0.9;
-  cubeC.position.x += 0.9;
-
-  cubeA.position.z += 0.8;
-  cubeB.position.z += 0.8;
-  cubeC.position.z += 0.8;
-
-  scene.add( cubeA, cubeB, cubeC );
-
-  var lightSource = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
-  scene.add(lightSource);
-
-  function render() {
+  var render = function () {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
     displayCameraPosition(camera);
   }
 
+  var lightSource = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+  scene.add(lightSource);
+
   //var controls = new THREE.OrbitControls(camera);
 
   render();
+
+  return scene;
 };
 
 
