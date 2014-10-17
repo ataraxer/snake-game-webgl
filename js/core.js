@@ -1,19 +1,36 @@
 var start = function(THREE) {
   var scene = generateScene(THREE);
 
-  var cubeA = generateCube(0.8);
-  var cubeB = generateCube(0.8);
-  var cubeC = generateCube(0.8);
+  var snake = Snake([
+    Position(0, 0),
+    //Position(1, 0),
+  ]);
 
-  cubeB.position.x -= 0.9;
-  cubeC.position.x += 0.9;
+  renderSnake(snake, scene);
+};
 
-  cubeA.position.z += 0.8;
-  cubeB.position.z += 0.8;
-  cubeC.position.z += 0.8;
 
-  scene.add( cubeA, cubeB, cubeC );
+var renderSnake = function (snake, scene) {
+  var pieces = snake.pieces;
 
+  var renderPiece = function (piece) {
+    var shift = 10;
+    var size = 0.8;
+    var margin = 0.1;
+    var step = size + (margin * 2);
+    var cube = generateCube(size);
+
+    cube.position.x = piece.x * step;
+    cube.position.y = piece.y * step;
+    cube.position.z = size / 2;
+
+    scene.add(cube);
+  };
+
+  for (pieceIndex in pieces) {
+    var piece = pieces[pieceIndex];
+    renderPiece(piece);
+  }
 };
 
 
