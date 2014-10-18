@@ -2,8 +2,11 @@ var start = function(THREE) {
   var scene = generateScene(THREE);
 
   var snake = Snake([
-    Position(0, 0),
-    //Position(1, 0),
+    Position(1, 10),
+    Position(2, 10),
+    Position(3, 10),
+    Position(4, 10),
+    Position(5, 10),
   ]);
 
   renderSnake(snake, scene);
@@ -20,8 +23,8 @@ var renderSnake = function (snake, scene) {
     var step = size + (margin * 2);
     var cube = generateCube(size);
 
-    cube.position.x = piece.x * step;
-    cube.position.y = piece.y * step;
+    cube.position.x = piece.x * step - shift + (size / 2) + margin;
+    cube.position.y = piece.y * step - shift + (size / 2) + margin;
     cube.position.z = size / 2;
 
     scene.add(cube);
@@ -51,7 +54,7 @@ var generateScene = function (THREE) {
 
   camera.position.x = shift;
   camera.position.y = -shift;
-  camera.position.z = 50;
+  camera.position.z = 49.5;
 
   camera.rotateOnAxis(
     (new THREE.Vector3(0, 0, 1)).normalize(),
@@ -68,7 +71,7 @@ var generateScene = function (THREE) {
   renderer.setSize(width, height);
   document.body.appendChild( renderer.domElement );
 
-  var field = generateField(20, 20);
+  var field = generateField(21, 21);
 
   scene.add(field);
 
