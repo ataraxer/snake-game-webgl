@@ -9,31 +9,47 @@ var start = function(THREE) {
     Position(5, 10),
   ]);
 
-  renderSnake(snake, scene);
+  var rendered = renderSnake(snake, scene);
+
+  setInterval(function () {
+    var tailCube = rendered.shift();
+    scene.remove(tailCube);
+    var head = snake.move();
+    var headCube = renderPiece(scene, head)
+    rendered.push(headCube);
+  }, 500);
+};
+
+
+var renderPiece = function (scene, piece) {
+  var shift = 10;
+  var size = 0.8;
+  var margin = 0.1;
+  var step = size + (margin * 2);
+  var cube = generateCube(size);
+
+  cube.position.x = piece.x * step - shift + (size / 2) + margin;
+  cube.position.y = piece.y * step - shift + (size / 2) + margin;
+  cube.position.z = size / 2;
+
+  scene.add(cube);
+
+  return cube;
 };
 
 
 var renderSnake = function (snake, scene) {
   var pieces = snake.pieces;
 
-  var renderPiece = function (piece) {
-    var shift = 10;
-    var size = 0.8;
-    var margin = 0.1;
-    var step = size + (margin * 2);
-    var cube = generateCube(size);
-
-    cube.position.x = piece.x * step - shift + (size / 2) + margin;
-    cube.position.y = piece.y * step - shift + (size / 2) + margin;
-    cube.position.z = size / 2;
-
-    scene.add(cube);
-  };
+  var rendered = [];
 
   for (pieceIndex in pieces) {
     var piece = pieces[pieceIndex];
-    renderPiece(piece);
+    var cube = renderPiece(scene, piece);
+    rendered.push(cube);
   }
+
+  return rendered;
 };
 
 
