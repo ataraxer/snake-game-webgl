@@ -18,6 +18,19 @@ var start = function(THREE) {
     var headCube = renderPiece(scene, head)
     rendered.push(headCube);
   }, 500);
+
+  document.onkeydown = function () {
+    switch (window.event.keyCode) {
+      case 40:  // down
+      case 37:  // left
+        snake.left();
+        break;
+      case 38:  // up
+      case 39:  // right
+        snake.right();
+        break;
+    }
+  };
 };
 
 
