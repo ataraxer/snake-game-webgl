@@ -1,7 +1,7 @@
 var start = function(THREE) {
   var scene = generateScene(THREE);
 
-  var snake = Snake([
+  var snake = Snake(21, [
     Position(1, 10),
     Position(2, 10),
     Position(3, 10),

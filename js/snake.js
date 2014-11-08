@@ -12,7 +12,7 @@ var Position = (function () {
 
 
 var Snake = (function () {
-  var snake = function (pieces) {
+  var snake = function (fieldSize, pieces) {
     this.pieces = pieces;
 
     this.direction = [1, 0];
@@ -46,9 +46,15 @@ var Snake = (function () {
     this.move = function () {
       var head = this.head();
 
-      var newHead = Position(
-        head.x + this.direction[0],
-        head.y + this.direction[1]);
+      var newX = head.x + this.direction[0];
+      var newY = head.y + this.direction[1];
+
+      if (newX >= fieldSize) newX = 0;
+      if (newY >= fieldSize) newY = 0;
+      if (newX < 0) newX = fieldSize - 1;
+      if (newY < 0) newY = fieldSize - 1;
+
+      var newHead = Position(newX, newY);
 
       this.pieces.push(newHead);
       this.pieces.shift();
@@ -57,7 +63,7 @@ var Snake = (function () {
     };
   };
 
-  return function (pieces) {
-    return new snake(pieces);
+  return function (fieldSize, pieces) {
+    return new snake(fieldSize, pieces);
   };
 })();
