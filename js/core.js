@@ -41,8 +41,8 @@ var renderPiece = function (scene, piece) {
   var step = size + (margin * 2);
   var cube = generateCube(size);
 
-  cube.position.x = piece.x * step - shift + (size / 2) + margin;
-  cube.position.y = piece.y * step - shift + (size / 2) + margin;
+  cube.position.x = piece.x * step - shift;
+  cube.position.y = piece.y * step - shift;
   cube.position.z = size / 2;
 
   scene.add(cube);
