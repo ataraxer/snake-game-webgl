@@ -19,6 +19,17 @@ var start = function(THREE) {
     rendered.push(headCube);
   }, 500);
 
+  var frame = 0;
+  var food;
+
+  setInterval(function () {
+    frame += 1;
+    opacity = Math.cos(frame * Math.PI / 60) / 4 + 0.75;
+    if (food) scene.remove(food);
+    food = renderPiece(scene, Position(0, 0), 0x5f87ff, opacity);
+  }, 1000 / 60);
+
+
   document.onkeydown = function () {
     switch (window.event.keyCode) {
       case 40:  // down
@@ -34,12 +45,12 @@ var start = function(THREE) {
 };
 
 
-var renderPiece = function (scene, piece) {
+var renderPiece = function (scene, piece, color, opacity) {
   var shift = 10;
   var size = 0.8;
   var margin = 0.1;
   var step = size + (margin * 2);
-  var cube = generateCube(size);
+  var cube = generateCube(size, color, opacity);
 
   cube.position.x = piece.x * step - shift;
   cube.position.y = piece.y * step - shift;
@@ -176,10 +187,12 @@ var generateField = function(x, y) {
 };
 
 
-var generateCube = function (side) {
+var generateCube = function (side, color, opacity) {
   var geometry = new THREE.BoxGeometry(side, side, side);
   var material = new THREE.MeshPhongMaterial({
-    color: 0x00cc00,
+    color: color || 0x00cc00,
+    transparent: !!opacity,
+    opacity: opacity || 1,
     shading: THREE.SmoothShading
   });
 
