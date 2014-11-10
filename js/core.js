@@ -9,25 +9,35 @@ var start = function(THREE) {
     Position(5, 10),
   ]);
 
+
+  var SECOND = 1000;
+  var FRAME_RATE = 60;
+  var DIFFICULTY = 2;
+
   var rendered = renderSnake(snake, scene);
-
-  setInterval(function () {
-    var tailCube = rendered.shift();
-    scene.remove(tailCube);
-    var head = snake.move();
-    var headCube = renderPiece(scene, head)
-    rendered.push(headCube);
-  }, 500);
-
   var frame = 0;
   var food;
 
-  setInterval(function () {
+  var gameLoop = function () {
     frame += 1;
-    opacity = Math.cos(frame * Math.PI / 60) / 4 + 0.75;
+
+    // render food
+    opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
     if (food) scene.remove(food);
     food = renderPiece(scene, Position(0, 0), 0x5f87ff, opacity);
-  }, 1000 / 60);
+
+    // render snake
+    if (frame % (FRAME_RATE / DIFFICULTY) == 0) {
+      var tailCube = rendered.shift();
+      scene.remove(tailCube);
+      var head = snake.move();
+      var headCube = renderPiece(scene, head)
+      rendered.push(headCube);
+    }
+  };
+
+
+  setInterval(gameLoop, SECOND / FRAME_RATE);
 
 
   document.onkeydown = function () {
