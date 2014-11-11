@@ -1,5 +1,36 @@
 var start = function(THREE) {
-  var scene = generateScene(THREE);
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  var camera = generateCamera({
+    perspective: false,
+    width: width,
+    height: height,
+    distance: 75,
+  });
+
+  positionCamera(camera);
+
+  //var controls = new THREE.OrbitControls(camera);
+
+  var scene = generateScene(THREE, {
+    width: width,
+    height: height,
+  });
+
+  var renderer = generateRenderer(THREE, {
+    width: width,
+    height: height,
+  });
+
+  var render = function () {
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+    displayCameraPosition(camera);
+  };
+
+  render();
+
 
   var snake = Snake(21, [
     Position(1, 10),
@@ -96,19 +127,7 @@ var renderSnake = function (snake, scene) {
 };
 
 
-var generateScene = function (THREE) {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-
-  var scene = new THREE.Scene();
-
-  var camera = generateCamera({
-    perspective: false,
-    width: width,
-    height: height,
-    distance: 75
-  });
-
+var positionCamera = function (camera) {
   var shift = 35;
 
   camera.position.x = shift;
@@ -123,29 +142,34 @@ var generateScene = function (THREE) {
     (new THREE.Vector3(1, 0, 0)).normalize(),
     45 * Math.PI / 180);
 
-  var renderer = new THREE.WebGLRenderer({
-    antialias: true
-  });
+  return camera;
+};
+
+
+var generateRenderer = function (THREE, options) {
+  var width = options.width;
+  var height = options.height;
+
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
 
   renderer.setSize(width, height);
   document.body.appendChild( renderer.domElement );
 
+  return renderer;
+};
+
+
+var generateScene = function (THREE, options) {
+  var width = options.width;
+  var height = options.height;
+
+  var scene = new THREE.Scene();
+
   var field = generateField(21, 21);
-
   scene.add(field);
-
-  var render = function () {
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
-    displayCameraPosition(camera);
-  }
 
   var lightSource = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
   scene.add(lightSource);
-
-  //var controls = new THREE.OrbitControls(camera);
-
-  render();
 
   return scene;
 };
