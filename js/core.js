@@ -18,7 +18,11 @@ var start = function(THREE) {
   var frame = 0;
   var food;
 
+  var pause = false;
+
   var gameLoop = function () {
+    if (pause) return;
+
     frame += 1;
 
     // render food
@@ -39,6 +43,8 @@ var start = function(THREE) {
 
   setInterval(gameLoop, SECOND / FRAME_RATE);
 
+  window.onblur  = function() { pause = true; }
+  window.onfocus = function() { pause = false; }
 
   document.onkeydown = function () {
     switch (window.event.keyCode) {
@@ -49,6 +55,9 @@ var start = function(THREE) {
       case 38:  // up
       case 39:  // right
         snake.right();
+        break;
+      case 32:  // space
+        pause = !pause;
         break;
     }
   };
