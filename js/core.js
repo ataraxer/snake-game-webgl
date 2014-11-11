@@ -23,14 +23,6 @@ var start = function(THREE) {
     height: height,
   });
 
-  var render = function () {
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
-    displayCameraPosition(camera);
-  };
-
-  render();
-
 
   var snake = Snake(21, [
     Position(1, 10),
@@ -53,9 +45,13 @@ var start = function(THREE) {
 
   var gameLoop = function () {
     if (pause) return;
-
     frame += 1;
+  };
 
+  setInterval(gameLoop, SECOND / FRAME_RATE);
+
+
+  var updateState = function () {
     // render food
     opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
     if (food) scene.remove(food);
@@ -72,7 +68,15 @@ var start = function(THREE) {
   };
 
 
-  setInterval(gameLoop, SECOND / FRAME_RATE);
+  var render = function () {
+    requestAnimationFrame(render);
+    updateState();
+    renderer.render(scene, camera);
+    displayCameraPosition(camera);
+  };
+
+  render();
+
 
   window.onblur  = function() { pause = true; }
   window.onfocus = function() { pause = false; }
