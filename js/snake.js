@@ -16,8 +16,11 @@ var Snake = (function () {
     this.pieces = pieces;
 
     this.direction = [1, 0];
+    this.turnLocked = false;
 
     this.right = function () {
+      if (this.turnLocked) return;
+
       var x = this.direction[0];
       var y = this.direction[1];
 
@@ -26,9 +29,12 @@ var Snake = (function () {
 
       var newDirection = [newX, newY];
       this.direction = newDirection;
+      this.turnLocked = true;
     };
 
     this.left = function () {
+      if (this.turnLocked) return;
+
       var x = this.direction[0];
       var y = this.direction[1];
 
@@ -37,6 +43,7 @@ var Snake = (function () {
 
       var newDirection = [newX, newY];
       this.direction = newDirection;
+      this.turnLocked = true;
     };
 
     this.head = function () {
@@ -58,6 +65,8 @@ var Snake = (function () {
 
       this.pieces.push(newHead);
       this.pieces.shift();
+
+      this.turnLocked = false;
 
       return newHead;
     };
