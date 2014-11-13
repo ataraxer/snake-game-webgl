@@ -3,6 +3,10 @@ var Position = (function () {
     this.x = x;
     this.y = y;
     this.toArray = [x, y];
+
+    this.eq = function (that) {
+      return this.x == that.x && this.y == that.y;
+    };
   };
 
   return function (x, y) {

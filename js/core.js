@@ -39,7 +39,8 @@ var start = function(THREE) {
 
   var rendered = renderSnake(snake, scene);
   var frame = 0;
-  var food;
+  var food = Position(10, 10);
+  var foodCube;
 
   var pause = false;
 
@@ -50,19 +51,30 @@ var start = function(THREE) {
 
   setInterval(gameLoop, SECOND / FRAME_RATE);
 
+  var randomCoord = function () {
+    return (Math.random() * 20) | 0;
+  };
+
+  var randomPosition = function () {
+    return Position(randomCoord(), randomCoord());
+  };
+
 
   var updateState = function () {
     // render food
     opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
-    if (food) scene.remove(food);
-    food = renderPiece(scene, Position(0, 0), 0x5f87ff, opacity);
+    if (foodCube) scene.remove(foodCube);
+    foodCube = renderPiece(scene, food, 0x5f87ff, opacity);
 
     // render snake
     if (frame % (FRAME_RATE / DIFFICULTY) == 0) {
       var tailCube = rendered.shift();
       scene.remove(tailCube);
       var head = snake.move();
-      var headCube = renderPiece(scene, head)
+      if (head.eq(food)) {
+        food = randomPosition();
+      }
+      var headCube = renderPiece(scene, head);
       rendered.push(headCube);
     }
   };
