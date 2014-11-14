@@ -54,6 +54,12 @@ var Snake = (function () {
       return this.pieces[this.pieces.length - 1];
     };
 
+    this.contains = function (piece) {
+      return this.pieces.filter(function (item) {
+        return item.eq(piece);
+      }).length > 0;
+    };
+
     this.move = function () {
       var head = this.head();
 

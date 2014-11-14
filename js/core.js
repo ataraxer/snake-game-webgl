@@ -72,7 +72,9 @@ var start = function(THREE) {
       scene.remove(tailCube);
       var head = snake.move();
       if (head.eq(food)) {
-        food = randomPosition();
+        do {
+          food = randomPosition();
+        } while (snake.contains(food));
       }
       var headCube = renderPiece(scene, head);
       rendered.push(headCube);
