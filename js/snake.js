@@ -21,6 +21,7 @@ var Snake = (function () {
 
     this.direction = [1, 0];
     this.turnLocked = false;
+    this.newPieces = [];
 
     this.right = function () {
       if (this.turnLocked) return;
@@ -74,11 +75,25 @@ var Snake = (function () {
       var newHead = Position(newX, newY);
 
       this.pieces.push(newHead);
-      this.pieces.shift();
+
+      var last = this.pieces[0];
+      var newPiece = this.newPieces[0];
+
+      var grown = false;
+      if (newPiece && last.eq(newPiece)) {
+        this.newPieces.shift();
+        grown = true;
+      } else {
+        this.pieces.shift();
+      }
 
       this.turnLocked = false;
 
-      return newHead;
+      return grown;
+    };
+
+    this.eat = function (food) {
+      this.newPieces.push(food);
     };
   };
 

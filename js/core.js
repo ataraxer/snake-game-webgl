@@ -68,10 +68,14 @@ var start = function(THREE) {
 
     // render snake
     if (frame % (FRAME_RATE / DIFFICULTY) == 0) {
-      var tailCube = rendered.shift();
-      scene.remove(tailCube);
-      var head = snake.move();
+      var grown = snake.move();
+      if (!grown) {
+        var tailCube = rendered.shift();
+        scene.remove(tailCube);
+      }
+      var head = snake.head();
       if (head.eq(food)) {
+        snake.eat(food);
         do {
           food = randomPosition();
         } while (snake.contains(food));
