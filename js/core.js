@@ -23,20 +23,22 @@ var start = function(THREE) {
     height: height,
   });
 
-
-  var snake = Snake(21, [
-    Position(1, 10),
-    Position(2, 10),
-    Position(3, 10),
-    Position(4, 10),
-    Position(5, 10),
-  ]);
+  var generateSnake = function () {
+    return Snake(21, [
+      Position(1, 10),
+      Position(2, 10),
+      Position(3, 10),
+      Position(4, 10),
+      Position(5, 10),
+    ]);
+  };
 
 
   var SECOND = 1000;
   var FRAME_RATE = 60;
   var DIFFICULTY = 2;
 
+  var snake = generateSnake();
   var rendered = renderSnake(snake, scene);
   var frame = 0;
   var food = Position(10, 10);
