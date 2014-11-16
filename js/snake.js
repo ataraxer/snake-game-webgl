@@ -95,6 +95,19 @@ var Snake = (function () {
     this.eat = function (food) {
       this.newPieces.push(food);
     };
+
+    this.hasCollided = function () {
+      var head = this.head();
+      var counter = 0;
+
+      for (var index in this.pieces) {
+        var piece = this.pieces[index];
+        if (piece.eq(head)) counter += 1;
+        if (counter == 2) return true;
+      }
+
+      return false;
+    };
   };
 
   return function (fieldSize, pieces) {

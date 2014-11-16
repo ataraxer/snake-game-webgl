@@ -71,6 +71,15 @@ var start = function(THREE) {
     // render snake
     if (frame % (FRAME_RATE / DIFFICULTY) == 0) {
       var grown = snake.move();
+      if (snake.hasCollided()) {
+        snake = generateSnake();
+        rendered.map(function (item) {
+          scene.remove(item);
+        });
+        rendered = renderSnake(snake, scene);
+        // skip everything else
+        return;
+      }
       if (!grown) {
         var tailCube = rendered.shift();
         scene.remove(tailCube);
