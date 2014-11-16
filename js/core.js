@@ -36,7 +36,7 @@ var start = function(THREE) {
 
   var SECOND = 1000;
   var FRAME_RATE = 60;
-  var DIFFICULTY = 2;
+  var DIFFICULTY = 6;
 
   var snake = generateSnake();
   var rendered = renderSnake(snake, scene);
