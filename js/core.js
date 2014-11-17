@@ -2,26 +2,8 @@ var start = function(THREE) {
   var width = window.innerWidth;
   var height = window.innerHeight;
 
-  var camera = generateCamera({
-    perspective: false,
-    width: width,
-    height: height,
-    distance: 75,
-  });
-
-  positionCamera(camera);
-
-  //var controls = new THREE.OrbitControls(camera);
-
-  var scene = generateScene(THREE, {
-    width: width,
-    height: height,
-  });
-
-  var renderer = generateRenderer(THREE, {
-    width: width,
-    height: height,
-  });
+  /* ==== Game Logic ==== */
+  var DIFFICULTY = 6;
 
   var generateSnake = function () {
     return Snake(21, [
@@ -33,26 +15,6 @@ var start = function(THREE) {
     ]);
   };
 
-
-  var SECOND = 1000;
-  var FRAME_RATE = 60;
-  var DIFFICULTY = 6;
-
-  var snake = generateSnake();
-  var rendered = renderSnake(snake, scene);
-  var frame = 0;
-  var food = Position(10, 10);
-  var foodCube;
-
-  var pause = false;
-
-  var gameLoop = function () {
-    if (pause) return;
-    frame += 1;
-  };
-
-  setInterval(gameLoop, SECOND / FRAME_RATE);
-
   var randomCoord = function () {
     return (Math.random() * 20) | 0;
   };
@@ -61,47 +23,54 @@ var start = function(THREE) {
     return Position(randomCoord(), randomCoord());
   };
 
+  var snake = generateSnake();
+  var food = Position(10, 10);
+
+
+  /* ==== Rendering logic ==== */
+  var SECOND = 1000;
+  var FRAME_RATE = 60;
+
+  var engine = generateEngine({
+    width: width,
+    height: height,
+  });
+
+  var frame = 0;
+  var pause = false;
+
+  var frameLoop = function () {
+    if (pause) return;
+    frame += 1;
+  };
+
+  setInterval(frameLoop, SECOND / FRAME_RATE);
+
 
   var updateState = function () {
-    // render food
-    opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
-    if (foodCube) scene.remove(foodCube);
-    foodCube = renderPiece(scene, food, 0x5f87ff, opacity);
+    snake.move();
 
-    // render snake
-    if (frame % (FRAME_RATE / DIFFICULTY) == 0) {
-      var grown = snake.move();
-      if (snake.hasCollided()) {
-        snake = generateSnake();
-        rendered.map(function (item) {
-          scene.remove(item);
-        });
-        rendered = renderSnake(snake, scene);
-        // skip everything else
-        return;
-      }
-      if (!grown) {
-        var tailCube = rendered.shift();
-        scene.remove(tailCube);
-      }
-      var head = snake.head();
-      if (head.eq(food)) {
-        snake.eat(food);
-        do {
-          food = randomPosition();
-        } while (snake.contains(food));
-      }
-      var headCube = renderPiece(scene, head);
-      rendered.push(headCube);
+    if (snake.hasCollided()) {
+      snake = generateSnake();
+      // skip everything else
+      return;
+    }
+
+    if (snake.head().eq(food)) {
+      snake.eat(food);
+      do {
+        food = randomPosition();
+      } while (snake.contains(food));
     }
   };
 
 
   var render = function () {
     requestAnimationFrame(render);
-    updateState();
-    renderer.render(scene, camera);
-    displayCameraPosition(camera);
+    var stateUpdated = frame % (FRAME_RATE / DIFFICULTY) == 0
+    if (stateUpdated) updateState();
+    engine.render(stateUpdated, snake, food, frame, FRAME_RATE);
+    snake.moved = false;
   };
 
   render();
@@ -128,6 +97,77 @@ var start = function(THREE) {
 };
 
 
+var generateEngine = function (options) {
+  var width = options.width;
+  var height = options.height;
+
+  var camera = generateCamera({
+    perspective: false,
+    width: width,
+    height: height,
+    distance: 75,
+  });
+
+  positionCamera(camera);
+
+  //var controls = new THREE.OrbitControls(camera);
+
+  var scene = generateScene(THREE, {
+    width: width,
+    height: height,
+  });
+
+  var renderer = generateRenderer(THREE, {
+    width: width,
+    height: height,
+  });
+
+  var foodCube;
+  var renderedPieces;
+  var previousPieces;
+
+  return {
+    render: function (stateUpdated, snake, food, frame, FRAME_RATE) {
+      this.updateScene(stateUpdated, snake, food, frame, FRAME_RATE);
+      renderer.render(scene, camera);
+      displayCameraPosition(camera);
+    },
+
+
+    updateScene: function (stateUpdated, snake, food, frame, FRAME_RATE) {
+      // render food
+      var opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
+      if (foodCube) scene.remove(foodCube);
+      foodCube = renderPiece(scene, food, 0x5f87ff, opacity);
+
+      if (!stateUpdated) return;
+
+      // render snake
+      if (!renderedPieces) {
+        renderedPieces = previousPieces = renderSnake(snake, scene);
+      }
+      previousPieces = renderedPieces.keySeq().toSet();
+      var currentPieces = Immutable.Set(snake.pieces);
+
+      var removed = currentPieces.subtract(previousPieces);
+      var added = previousPieces.subtract(currentPieces);
+
+      added.forEach(function (item) {
+        var cube = renderedPieces.get(item);
+        scene.remove(cube);
+        renderedPieces = renderedPieces.remove(item);
+      });
+
+      removed.forEach(function (item) {
+        var cube = renderPiece(scene, item);
+        scene.add(cube);
+        renderedPieces = renderedPieces.set(item, cube);
+      });
+    },
+  };
+};
+
+
 var renderPiece = function (scene, piece, color, opacity) {
   var shift = 10;
   var size = 0.8;
@@ -148,12 +188,12 @@ var renderPiece = function (scene, piece, color, opacity) {
 var renderSnake = function (snake, scene) {
   var pieces = snake.pieces;
 
-  var rendered = [];
+  var rendered = Immutable.Map();
 
   for (pieceIndex in pieces) {
     var piece = pieces[pieceIndex];
     var cube = renderPiece(scene, piece);
-    rendered.push(cube);
+    rendered = rendered.set(piece, cube);
   }
 
   return rendered;
