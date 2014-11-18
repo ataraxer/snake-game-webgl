@@ -125,12 +125,20 @@ var generateEngine = function (options) {
   var foodCube;
   var renderedPieces;
   var previousPieces;
+  var lastFrame = Date.now();
+  var lastShow = lastFrame;
 
   return {
     render: function (stateUpdated, snake, food, frame, FRAME_RATE) {
       this.updateScene(stateUpdated, snake, food, frame, FRAME_RATE);
       renderer.render(scene, camera);
-      displayCameraPosition(camera);
+      var now = Date.now();
+      if ((now - lastShow) > 250) {
+        var fps = 1000 / (now - lastFrame) | 0;
+        displayFPS(fps)
+        lastShow = now;
+      }
+      lastFrame = now;
     },
 
 
@@ -285,6 +293,12 @@ var displayCameraPosition = function (camera) {
     camera.rotation._z,
   ].join(', ');
   var text = [up, position, rotation].join('<br/>');
+  $('#infobox').html(text);
+};
+
+
+var displayFPS = function (fps) {
+  var text = "FPS: " + fps;
   $('#infobox').html(text);
 };
 
