@@ -25,6 +25,7 @@ var start = function(THREE) {
 
   var snake = generateSnake();
   var food = Position(10, 10);
+  var score = 0;
 
 
   /* ==== Rendering logic ==== */
@@ -52,12 +53,14 @@ var start = function(THREE) {
 
     if (snake.hasCollided()) {
       snake = generateSnake();
+      score = 0;
       // skip everything else
       return;
     }
 
     if (snake.head().eq(food)) {
       snake.eat(food);
+      score += 1;
       do {
         food = randomPosition();
       } while (snake.contains(food));
@@ -69,7 +72,7 @@ var start = function(THREE) {
     requestAnimationFrame(render);
     var stateUpdated = frame % (FRAME_RATE / DIFFICULTY) == 0
     if (stateUpdated) updateState();
-    engine.render(stateUpdated, snake, food, frame, FRAME_RATE);
+    engine.render(stateUpdated, snake, food, score, frame, FRAME_RATE);
     snake.moved = false;
   };
 
@@ -125,12 +128,14 @@ var generateEngine = function (options) {
   var foodCube;
   var renderedPieces;
   var previousPieces;
+  var prevScore = 0;
+  var scorePieces = [];
   var lastFrame = Date.now();
   var lastShow = lastFrame;
 
   return {
-    render: function (stateUpdated, snake, food, frame, FRAME_RATE) {
-      this.updateScene(stateUpdated, snake, food, frame, FRAME_RATE);
+    render: function (stateUpdated, snake, food, score, frame, FRAME_RATE) {
+      this.updateScene(stateUpdated, snake, food, score, frame, FRAME_RATE);
       renderer.render(scene, camera);
       var now = Date.now();
       if ((now - lastShow) > 250) {
@@ -142,11 +147,25 @@ var generateEngine = function (options) {
     },
 
 
-    updateScene: function (stateUpdated, snake, food, frame, FRAME_RATE) {
+    updateScene: function (stateUpdated, snake, food, score, frame, FRAME_RATE) {
       // render food
       var opacity = Math.cos(frame * Math.PI / FRAME_RATE) / 4 + 0.75;
       if (foodCube) scene.remove(foodCube);
       foodCube = renderPiece(scene, food, 0x5f87ff, opacity);
+
+      if (score == 0) {
+        scorePieces.map(function (item) {
+          scene.remove(item);
+        });
+      }
+
+      if (score > prevScore) {
+        var position = Position(-1, score - 1);
+        var scoreCube = renderPiece(scene, position, 0x5f87ff);
+        scorePieces.push(scoreCube);
+      }
+
+      prevScore = score;
 
       if (!stateUpdated) return;
 
