@@ -37,15 +37,7 @@ var start = function(THREE) {
     height: height,
   });
 
-  var frame = 0;
   var pause = false;
-
-  var frameLoop = function () {
-    if (pause) return;
-    frame += 1;
-  };
-
-  setInterval(frameLoop, SECOND / FRAME_RATE);
 
 
   var updateState = function () {
@@ -68,7 +60,11 @@ var start = function(THREE) {
   };
 
 
+  var firstRender;
+
   var render = function () {
+    if (!firstRender) firstRender = Date.now();
+    var frame = (Date.now() - firstRender) / (1000 / 60) | 0;
     requestAnimationFrame(render);
     var stateUpdated = frame % (FRAME_RATE / DIFFICULTY) == 0
     if (stateUpdated) updateState();
